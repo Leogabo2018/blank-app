@@ -40,7 +40,7 @@ if not st.session_state.autenticado:
     st.markdown("<h2 style='text-align: center; font-weight: bold; color: #111111;'>FORMATO DE RECIBO Y ENTREGA DE TURNO</h2>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #555555; font-size: 15px;'>Gestión Clínica Asistencial Digital Sin Papel</p>", unsafe_allow_html=True)
     
-    col_izq, col_centro, col_der = st.columns([1, 2, 1])
+    col_izq, col_centro, col_der = st.columns()
     
     with col_centro:
         if not st.session_state.mostrar_registro:
@@ -135,12 +135,14 @@ else:
                 col_in1, col_in2 = st.columns(2)
                 with col_in1:
                     ta_s = st.number_input("Tensión Arterial Sistólica (mmHg)", value=120)
+                    ta_d = st.number_input("Tensión Arterial Diastólica (mmHg)", value=80)
                     fc = st.number_input("Frecuencia Cardíaca (FC)", value=80)
-                    temp = st.number_input("Temperatura Corporal (°C)", value=36.5, format="%.1f")
                 with col_in2:
-                    so2 = st.number_input("Saturación de Oxígeno (SO2 %)", value=98)
                     fr = st.number_input("Frecuencia Respiratoria (FR)", value=16)
-                    dolor_sel = st.slider("Escala del Dolor", 0, 10, value=0)
+                    temp = st.number_input("Temperatura Corporal (°C)", value=36.5, format="%.1f")
+                    so2 = st.number_input("Saturación de Oxígeno (SO2 %)", value=98)
+                    
+                dolor_sel = st.slider("Escala del Dolor", 0, 10, value=0)
                 
                 st.markdown("##### 🚨 Semáforo de Alertas Clínicas (NEWS2)")
                 est_fc, bg_fc, tx_fc = evaluar_signo("FC", fc)
@@ -159,5 +161,4 @@ else:
                 heridas_input = st.text_area("🩹 Heridas, Drenes, Piel u Otros:")
                 via_oral_input = st.text_area("🍽️ Estado de la Vía Oral:")
                 
-                st.markdown("##### 💧 Eliminación")
-                c_e1, c_e2 = st.columns(2)
+
