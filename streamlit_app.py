@@ -183,39 +183,50 @@ else:
             with tab_a:
                 st.markdown("#### 🩺 Evaluación y Monitoreo")
                 col_in1, col_in2 = st.columns(2)
-with col_in1:
-ta_s = st.number_input("Tensión Arterial Sistólica (mmHg)", value=120)
-ta_d = st.number_input("Tensión Arterial Diastólica (mmHg)", value=80)
-fc = st.number_input("Frecuencia Cardíaca (FC)", value=80)
-with col_in2:
-fr = st.number_input("Frecuencia Respiratoria (FR)", value=16)
-temp = st.number_input("Temperatura Corporal (°C)", value=36.5, format="%.1f")
-so2 = st.number_input("Saturación de Oxígeno (SO2 %)", value=98)
-dolor_sel = st.slider("Escala del Dolor", 0, 10, value=0)
-st.markdown("##### 🚨 Semáforo de Alertas Clínicas (NEWS2)")
-est_fc, bg_fc, tx_fc = evaluar_signo("FC", fc)
-est_so2, bg_so2, tx_so2 = evaluar_signo("SO2", so2)
-render_badge("Frecuencia Cardíaca", est_fc, bg_fc, tx_fc)
-render_badge("Saturación de Oxígeno", est_so2, bg_so2, tx_so2)
-st.markdown("##### 🫁 Soporte Oxigenoterapia")
-oxigeno_sel = st.radio("¿Tiene soporte de Oxígeno?", ["No", "Sí"], horizontal=True)
-oxigeno_det = st.text_input("Dispositivo y Flujo:") if oxigeno_sel == "Sí" else ""
-st.markdown("##### ⚠️ Escalas Clínicas de Riesgo")
-braden_sel = st.selectbox("Escala de Riesgo de Piel (Braden)", ["Riesgo Bajo", "Riesgo Medio", "Riesgo Alto"])
-morse_sel = st.selectbox("Escala de Riesgo de Caídas (Morse)", ["Riesgo Bajo", "Riesgo Medio", "Riesgo Alto"])
-heridas_input = st.text_area("🩹 Heridas, Drenes, Piel u Otros:")
-via_oral_input = st.text_area("🍽️ Estado de la Vía Oral:")
-st.markdown("##### 💧 Eliminación")
-tipo_orina = st.radio("Eliminación Urinaria:", ["Espontáneo", "Sonda Vesical"], horizontal=True)
-gasto_urinario = st.text_input("Gasto Urinario:", placeholder="Ej: 450 cc en el turno / 0.8 cc/kg/h")
-deposicion_sel = st.radio("Deposición:", ["Sí", "No"], horizontal=True)
-with tab_r:
-st.markdown("#### 📑 Recomendaciones de Entrega de Turno")
-recomendaciones_turno = st.text_area("📝 Recomendaciones y Novedades del Turno:", placeholder="Escribe aquí...")
-plan_input = st.text_area("📋 Plan de Cuidados de Enfermería y Pendientes:", placeholder="Laboratorios, imágenes...")
-alerta_input = st.text_input("🚨 Escala de Alerta Temprana (Observaciones NEWS2):", placeholder="Puntaje u observaciones...")
-recibe_input = st.text_input("👤 Identificación del Auxiliar o Jefe que Recibe:")
-if st.button("💾 FINALIZAR Y GUARDAR ENTREGA DE TURNO", use_container_width=True):
-st.success("¡Entrega de turno guardada con éxito en la nube!")
-else:
-st.error("❌ Paciente no registrado. Prueba con 10234567.")
+            with tab_a:
+                st.markdown("#### 🩺 Evaluación y Monitoreo")
+                col_in1, col_in2 = st.columns(2)
+                with col_in1:
+                    ta_s = st.number_input("Tensión Arterial Sistólica (mmHg)", value=120)
+                    ta_d = st.number_input("Tensión Arterial Diastólica (mmHg)", value=80)
+                    fc = st.number_input("Frecuencia Cardíaca (FC)", value=80)
+                with col_in2:
+                    fr = st.number_input("Frecuencia Respiratoria (FR)", value=16)
+                    temp = st.number_input("Temperatura Corporal (°C)", value=36.5, format="%.1f")
+                    so2 = st.number_input("Saturación de Oxígeno (SO2 %)", value=98)
+
+                dolor_sel = st.slider("Escala del Dolor", 0, 10, value=0)
+
+                st.markdown("##### 🚨 Semáforo de Alertas Clínicas (NEWS2)")
+                est_fc, bg_fc, tx_fc = evaluar_signo("FC", fc)
+                est_so2, bg_so2, tx_so2 = evaluar_signo("SO2", so2)
+                render_badge("Frecuencia Cardíaca", est_fc, bg_fc, tx_fc)
+                render_badge("Saturación de Oxígeno", est_so2, bg_so2, tx_so2)
+
+                st.markdown("##### 🫁 Soporte Oxigenoterapia")
+                oxigeno_sel = st.radio("¿Tiene soporte de Oxígeno?", ["No", "Sí"], horizontal=True)
+                oxigeno_det = st.text_input("Dispositivo y Flujo:") if oxigeno_sel == "Sí" else ""
+
+                st.markdown("##### ⚠️ Escalas Clínicas de Riesgo")
+                braden_sel = st.selectbox("Escala de Riesgo de Piel (Braden)", ["Riesgo Bajo", "Riesgo Medio", "Riesgo Alto"])
+                morse_sel = st.selectbox("Escala de Riesgo de Caídas (Morse)", ["Riesgo Bajo", "Riesgo Medio", "Riesgo Alto"])
+
+                heridas_input = st.text_area("🩹 Heridas, Drenes, Piel u Otros:")
+                via_oral_input = st.text_area("🍽️ Estado de la Vía Oral:")
+
+                st.markdown("##### 💧 Eliminación")
+                tipo_orina = st.radio("Eliminación Urinaria:", ["Espontáneo", "Sonda Vesical"], horizontal=True)
+                gasto_urinario = st.text_input("Gasto Urinario:", placeholder="Ej: 450 cc en el turno / 0.8 cc/kg/h")
+                deposicion_sel = st.radio("Deposición:", ["Sí", "No"], horizontal=True)
+
+            with tab_r:
+                st.markdown("#### 📑 Recomendaciones de Entrega de Turno")
+                recomendaciones_turno = st.text_area("📝 Recomendaciones y Novedades del Turno:", placeholder="Escribe aquí...")
+                plan_input = st.text_area("📋 Plan de Cuidados de Enfermería y Pendientes:", placeholder="Laboratorios, imágenes...")
+                alerta_input = st.text_input("🚨 Escala de Alerta Temprana (Observaciones NEWS2):", placeholder="Puntaje u observaciones...")
+                recibe_input = st.text_input("👤 Identificación del Auxiliar o Jefe que Recibe:")
+
+                if st.button("💾 FINALIZAR Y GUARDAR ENTREGA DE TURNO", use_container_width=True):
+                    st.success("¡Entrega de turno guardada con éxito en la nube!")
+        else:
+            st.error("❌ Paciente no registrado. Prueba con 10234567.")
