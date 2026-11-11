@@ -40,7 +40,7 @@ if not st.session_state.autenticado:
     st.markdown("<h2 style='text-align: center; font-weight: bold; color: #111111;'>FORMATO DE RECIBO Y ENTREGA DE TURNO</h2>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #555555; font-size: 15px;'>Gestión Clínica Asistencial Digital Sin Papel</p>", unsafe_allow_html=True)
     
-    col_izq, col_centro, col_der = st.columns([1, 2, 1])
+    col_izq, col_centro, col_der = st.columns()
     
     with col_centro:
         if not st.session_state.mostrar_registro:
@@ -161,7 +161,7 @@ else:
                 heridas_input = st.text_area("🩹 Heridas, Drenes, Piel u Otros:")
                 via_oral_input = st.text_area("🍽️ Estado de la Vía Oral:")
                 
-                               st.markdown("##### 💧 Eliminación")
+                st.markdown("##### 💧 Eliminación")
                 tipo_orina = st.radio("Eliminación Urinaria:", ["Espontáneo", "Sonda Vesical"], horizontal=True)
                 gasto_urinario = st.text_input("Gasto Urinario:", placeholder="Ej: 450 cc en el turno / 0.8 cc/kg/h")
                 deposicion_sel = st.radio("Deposición:", ["Sí", "No"], horizontal=True)
@@ -177,4 +177,3 @@ else:
                     st.success("¡Entrega de turno guardada con éxito en la nube!")
         else:
             st.error("❌ Paciente no registrado. Prueba con 10234567.")
-
