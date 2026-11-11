@@ -3,8 +3,8 @@ import time
 import database as db
 
 st.set_page_config(
-    page_title="SBAR Digital Pro", 
-    page_icon="🏥", 
+    page_title="SBAR Digital Pro",
+    page_icon="🏥",
     layout="centered"
 )
 
@@ -26,7 +26,7 @@ def evaluar_signo(nombre, valor):
 
 def render_badge(titulo, estado, bg, texto_color):
     st.markdown(f"""
-        <div style="background-color:{bg}; padding:8px; border-radius:6px; border-left:4px solid {texto_color}; margin-bottom:5px;">
+        <div style="background-color:{bg}; padding:8px; border-radius:6px; border-left:4px solid {texto_color}; margin-bottom:8px;">
             <span style="color:{texto_color}; font-weight:bold;">{titulo}:</span> <span style="color:{texto_color};">{estado}</span>
         </div>
     """, unsafe_allow_html=True)
@@ -75,13 +75,13 @@ if not st.session_state.autenticado:
                     st.rerun()
                 else:
                     st.error("⚠️ La contraseña debe tener mínimo 6 caracteres.")
-                    
-            if st.button("🔙 Volver al Inicio de Sesión", use_container_width=True):
+            
+            if st.button("⬅️ Volver al Inicio de Sesión", use_container_width=True):
                 st.session_state.mostrar_registro = False
                 st.rerun()
 
 else:
-    st.markdown(f"📊 **Sesión:** {st.session_state.usuario_id} | ⏱️ **Turno:** {st.session_state.turno}")
+    st.markdown(f"🏥 **Sesión:** {st.session_state.usuario_id} | 🕒 **Turno:** {st.session_state.turno}")
     if st.button("❌ Cerrar Sesión (Salir)"):
         st.session_state.autenticado = False
         st.rerun()
@@ -94,30 +94,30 @@ else:
         
         if paciente:
             st.markdown(f"""
-                <div style="background-color: #e8f4fd; padding: 12px; border-radius: 8px; border-left: 5px solid #0066cc; margin-bottom: 12px;">
+                <div style="background-color: #e8f4fd; padding: 12px; border-radius: 8px; border-left: 5px solid #0066cc; margin-bottom: 15px;">
                     <h4 style="margin: 0; color: #003366;">📌 Paciente: <b>{paciente['nombre_paciente']}</b></h4>
                     <p style="margin: 4px 0 0 0; color: #555555;"><b>Ubicación:</b> {paciente['cama']} | <b>Atención:</b> {paciente['num_atencion']} | <b>Edad:</b> {paciente['edad']} años</p>
                 </div>
             """, unsafe_allow_html=True)
             
-            tab_s, tab_b, tab_a, tab_r = st.tabs(["📋 S - SITUACIÓN", "🧬 B - ANTECEDENTES", "🩺 A - EVALUACIÓN", "📝 R - RECOMENDACIONES"])
+            tab_s, tab_b, tab_a, tab_r = st.tabs(["📋 S - SITUACIÓN", "🧬 B - ANTECEDENTES", "🩺 A - EVALUACIÓN", "📑 R - RECOMENDACIONES"])
             
             with tab_s:
                 st.markdown("#### 📌 Datos de la Situación")
                 st.text_input("Cama Asignada", value=paciente['cama'], disabled=True)
                 st.text_input("Número de Atención", value=paciente['num_atencion'], disabled=True)
                 st.text_input("Edad del Paciente", value=f"{paciente['edad']} Años", disabled=True)
-                diagnostico_input = st.text_area("💬 Diagnóstico Médico (Comentarios de la Entrega de Turno)", value=paciente['diagnostico'])
-
+                diagnostico_input = st.text_area("🩺 Diagnóstico Médico (Comentarios de la Entrega de Turno)", value=paciente['diagnostico'])
+                
             with tab_b:
-                st.markdown("#### 🧬 Historial y Dispositivos Clínicos")
+                st.markdown("#### 📋 Historial y Dispositivos Clínicos")
                 alergia_sel = st.radio("¿Registra Alergias?", ["No", "Sí"], index=1 if paciente['alergia_si_no'] == "Sí" else 0, horizontal=True)
                 alergia_det = st.text_input("Especificar Alergia:", value=paciente['alergia_detalle']) if alergia_sel == "Sí" else ""
                 
-                aisla_index = ["Ninguno", "Protector", "Respiratorio", "Contacto", "Aerosol"].index(paciente['aislamiento']) if paciente['aislamiento'] in ["Ninguno", "Protector", "Respiratorio", "Contacto", "Aerosol"] else 0
+                aisla_index = ["Ninguno", "Protector", "Respiratorio", "Contacto", "Aerosol"].index(paciente['aislamiento'])
                 aislamiento_sel = st.selectbox("Seleccione Tipo de Aislamiento:", ["Ninguno", "Protector", "Respiratorio", "Contacto", "Aerosol"], index=aisla_index)
                 
-                st.markdown("##### 🩹 Conteo Físico de Accesos Vasculares")
+                st.markdown("##### 💉 Conteo Físico de Accesos Vasculares")
                 c1, c2 = st.columns(2)
                 with c1:
                     c_peri = st.number_input("Acceso Periférico (Cantidad)", min_value=0, value=paciente['cant_periferico'])
@@ -127,53 +127,80 @@ else:
                     c_cvc = st.number_input("Catéter Venoso Central (CVC)", min_value=0, value=paciente['cant_cvc'])
                     c_art = st.number_input("Catéter Línea Arterial", min_value=0, value=paciente['cant_linea_arterial'])
                     c_alto = st.number_input("Catéter Alto Flujo", min_value=0, value=paciente['cant_alto_flujo'])
+
+                st.markdown("##### 💧 Infusiones y Goteo de Líquidos Administrados (UCI)")
+                st.caption("Marca los líquidos o medicamentos activos e indica la velocidad o dosis del goteo:")
+                
+                lista_goteos = [
+                    ("Solución Salina Normal 0.9%", "Ej: 80 cc/h"),
+                    ("Lactato de Ringer", "Ej: 100 cc/h"),
+                    ("Dextrosa al 10%", "Ej: 40 cc/h"),
+                    ("Potasio en adecuación 0.66 mEq/hr", "Ej: 10 cc/h (0.66 mEq/hr)"),
+                    ("Dexmedetomidina", "Ej: 0.4 mcg/kg/h"),
+                    ("Noradrenalina", "Ej: 0.12 mcg/kg/min"),
+                    ("Vasopresina", "Ej: 0.03 UI/min"),
+                    ("Amiodarona", "Ej: 15 cc/h (900 mg/24h)"),
+                    ("Insulina Cristalina", "Ej: 4 UI/h"),
+                    ("Nutrición Parenteral", "Ej: 62 cc/h"),
+                    ("Fentanilo", "Ej: 1.5 mcg/kg/h"),
+                    ("Midazolam", "Ej: 0.05 mg/kg/h"),
+                    ("Propofol", "Ej: 1.5 mg/kg/h")
+                ]
+                
+                goteos_activos = {}
+                col_g1, col_g2 = st.columns(2)
+                for idx, (nombre_liq, ejemplo_dosis) in enumerate(lista_goteos):
+                    columna_actual = col_g1 if idx % 2 == 0 else col_g2
+                    with columna_actual:
+                        activo = st.checkbox(nombre_liq, key=f"chk_goteo_{idx}")
+                        if activo:
+                            velocidad = st.text_input(
+                                f"Goteo / Dosis ({nombre_liq}):",
+                                placeholder=ejemplo_dosis,
+                                key=f"txt_goteo_{idx}"
+                            )
+                            goteos_activos[nombre_liq] = velocidad
+                
+                otros_goteos = st.text_input("➕ Otros goteos o infusiones adicionales:", placeholder="Especificar medicamento y velocidad de infusión")
                     
                 medico_input = st.text_input("👨‍⚕️ Médico Tratante Asignado", value=paciente['medico_tratante'])
-
+                
             with tab_a:
                 st.markdown("#### 🩺 Evaluación y Monitoreo")
-                col_in1, col_in2 = st.columns(2)
-                with col_in1:
-                    ta_s = st.number_input("Tensión Arterial Sistólica (mmHg)", value=120)
-                    ta_d = st.number_input("Tensión Arterial Diastólica (mmHg)", value=80)
-                    fc = st.number_input("Frecuencia Cardíaca (FC)", value=80)
-                with col_in2:
-                    fr = st.number_input("Frecuencia Respiratoria (FR)", value=16)
-                    temp = st.number_input("Temperatura Corporal (°C)", value=36.5, format="%.1f")
-                    so2 = st.number_input("Saturación de Oxígeno (SO2 %)", value=98)
-                    
-                dolor_sel = st.slider("Escala del Dolor", 0, 10, value=0)
-                
-                st.markdown("##### 🚨 Semáforo de Alertas Clínicas (NEWS2)")
-                est_fc, bg_fc, tx_fc = evaluar_signo("FC", fc)
-                est_so2, bg_so2, tx_so2 = evaluar_signo("SO2", so2)
-                render_badge("Frecuencia Cardíaca", est_fc, bg_fc, tx_fc)
-                render_badge("Saturación de Oxígeno", est_so2, bg_so2, tx_so2)
-
-                st.markdown("##### 🫁 Soporte Oxigenoterapia")
-                oxigeno_sel = st.radio("¿Tiene soporte de Oxígeno?", ["No", "Sí"], horizontal=True)
-                oxigeno_det = st.text_input("Dispositivo y Flujo:") if oxigeno_sel == "Sí" else ""
-
-                st.markdown("##### ⚠️ Escalas Clínicas de Riesgo")
-                braden_sel = st.selectbox("Escala de Riesgo de Piel (Braden)", ["Riesgo Bajo", "Riesgo Medio", "Riesgo Alto"])
-                morse_sel = st.selectbox("Escala de Riesgo de Caídas (Morse)", ["Riesgo Bajo", "Riesgo Medio", "Riesgo Alto"])
-                
-                heridas_input = st.text_area("🩹 Heridas, Drenes, Piel u Otros:")
-                via_oral_input = st.text_area("🍽️ Estado de la Vía Oral:")
-                
-                st.markdown("##### 💧 Eliminación")
-                tipo_orina = st.radio("Eliminación Urinaria:", ["Espontáneo", "Sonda Vesical"], horizontal=True)
-                gasto_urinario = st.text_input("Gasto Urinario:", placeholder="Ej: 450 cc en el turno / 0.8 cc/kg/h")
-                deposicion_sel = st.radio("Deposición:", ["Sí", "No"], horizontal=True)
-
-            with tab_r:
-                st.markdown("#### 📋 Recomendaciones de Entrega de Turno")
-                recomendaciones_turno = st.text_area("💬 Recomendaciones y Novedades del Turno:", placeholder="Escribe aquí las recomendaciones que se comentan durante la entrega de turno...", height=120)
-                plan_input = st.text_area("📝 Plan de Cuidados de Enfermería y Pendientes:", placeholder="Laboratorios, imágenes diagnósticas, valoraciones o procedimientos pendientes...")
-                alerta_input = st.text_input("🚨 Escala de Alerta Temprana (Observaciones NEWS2):", placeholder="Puntaje u observaciones de seguimiento...")
-                recibe_input = st.text_input("👤 Identificación del Auxiliar o Jefe que Recibe:")
-                
-                if st.button("💾 FINALIZAR Y GUARDAR ENTREGA DE TURNO", use_container_width=True):
-                    st.success("¡Entrega de turno guardada con éxito en la nube!")
-        else:
-            st.error("❌ Paciente no registrado. Prueba con 10234567.")
+col_in1, col_in2 = st.columns(2)
+with col_in1:
+ta_s = st.number_input("Tensión Arterial Sistólica (mmHg)", value=120)
+ta_d = st.number_input("Tensión Arterial Diastólica (mmHg)", value=80)
+fc = st.number_input("Frecuencia Cardíaca (FC)", value=80)
+with col_in2:
+fr = st.number_input("Frecuencia Respiratoria (FR)", value=16)
+temp = st.number_input("Temperatura Corporal (°C)", value=36.5, format="%.1f")
+so2 = st.number_input("Saturación de Oxígeno (SO2 %)", value=98)
+dolor_sel = st.slider("Escala del Dolor", 0, 10, value=0)
+st.markdown("##### 🚨 Semáforo de Alertas Clínicas (NEWS2)")
+est_fc, bg_fc, tx_fc = evaluar_signo("FC", fc)
+est_so2, bg_so2, tx_so2 = evaluar_signo("SO2", so2)
+render_badge("Frecuencia Cardíaca", est_fc, bg_fc, tx_fc)
+render_badge("Saturación de Oxígeno", est_so2, bg_so2, tx_so2)
+st.markdown("##### 🫁 Soporte Oxigenoterapia")
+oxigeno_sel = st.radio("¿Tiene soporte de Oxígeno?", ["No", "Sí"], horizontal=True)
+oxigeno_det = st.text_input("Dispositivo y Flujo:") if oxigeno_sel == "Sí" else ""
+st.markdown("##### ⚠️ Escalas Clínicas de Riesgo")
+braden_sel = st.selectbox("Escala de Riesgo de Piel (Braden)", ["Riesgo Bajo", "Riesgo Medio", "Riesgo Alto"])
+morse_sel = st.selectbox("Escala de Riesgo de Caídas (Morse)", ["Riesgo Bajo", "Riesgo Medio", "Riesgo Alto"])
+heridas_input = st.text_area("🩹 Heridas, Drenes, Piel u Otros:")
+via_oral_input = st.text_area("🍽️ Estado de la Vía Oral:")
+st.markdown("##### 💧 Eliminación")
+tipo_orina = st.radio("Eliminación Urinaria:", ["Espontáneo", "Sonda Vesical"], horizontal=True)
+gasto_urinario = st.text_input("Gasto Urinario:", placeholder="Ej: 450 cc en el turno / 0.8 cc/kg/h")
+deposicion_sel = st.radio("Deposición:", ["Sí", "No"], horizontal=True)
+with tab_r:
+st.markdown("#### 📑 Recomendaciones de Entrega de Turno")
+recomendaciones_turno = st.text_area("📝 Recomendaciones y Novedades del Turno:", placeholder="Escribe aquí...")
+plan_input = st.text_area("📋 Plan de Cuidados de Enfermería y Pendientes:", placeholder="Laboratorios, imágenes...")
+alerta_input = st.text_input("🚨 Escala de Alerta Temprana (Observaciones NEWS2):", placeholder="Puntaje u observaciones...")
+recibe_input = st.text_input("👤 Identificación del Auxiliar o Jefe que Recibe:")
+if st.button("💾 FINALIZAR Y GUARDAR ENTREGA DE TURNO", use_container_width=True):
+st.success("¡Entrega de turno guardada con éxito en la nube!")
+else:
+st.error("❌ Paciente no registrado. Prueba con 10234567.")
