@@ -40,7 +40,7 @@ if not st.session_state.autenticado:
     st.markdown("<h2 style='text-align: center; font-weight: bold; color: #111111;'>FORMATO DE RECIBO Y ENTREGA DE TURNO</h2>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #555555; font-size: 15px;'>Gestión Clínica Asistencial Digital Sin Papel</p>", unsafe_allow_html=True)
     
-    col_izq, col_centro, col_der = st.columns()
+    col_izq, col_centro, col_der = st.columns(3)
     
     with col_centro:
         if not st.session_state.mostrar_registro:
