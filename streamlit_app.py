@@ -160,19 +160,21 @@ else:
                 
                 heridas_input = st.text_area("🩹 Heridas, Drenes, Piel u Otros:")
                 via_oral_input = st.text_area("🍽️ Estado de la Vía Oral:")
+                
                 st.markdown("##### 💧 Eliminación")
-tipo_orina = st.radio("Eliminación Urinaria:", ["Espontáneo", "Sonda Vesical"], horizontal=True)
-gasto_urinario = st.text_input("Gasto Urinario:", placeholder="Ej: 450 cc en el turno / 0.8 cc/kg/h")
-deposicion_sel = st.radio("Deposición:", ["Sí", "No"], horizontal=True)
-with tab_r:
-st.markdown("#### 📋 Recomendaciones de Entrega de Turno")
-recomendaciones_turno = st.text_area("💬 Recomendaciones y Novedades del Turno:", placeholder="Escribe aquí las recomendaciones que se comentan durante la entrega de turno...", height=120)
-plan_input = st.text_area("📝 Plan de Cuidados de Enfermería y Pendientes:", placeholder="Laboratorios, imágenes diagnósticas, valoraciones o procedimientos pendientes...")
-alerta_input = st.text_input("🚨 Escala de Alerta Temprana (Observaciones NEWS2):", placeholder="Puntaje u observaciones de seguimiento...")
-recibe_input = st.text_input("👤 Identificación del Auxiliar o Jefe que Recibe:")
-st.markdown("
-", unsafe_allow_html=True)
-if st.button("💾 FINALIZAR Y GUARDAR ENTREGA DE TURNO", use_container_width=True):
-st.success("¡Entrega de turno guardada con éxito en la nube!")
-else:
-st.error("❌ Paciente no registrado. Prueba con 10234567.")
+                tipo_orina = st.radio("Eliminación Urinaria:", ["Espontáneo", "Sonda Vesical"], horizontal=True)
+                gasto_urinario = st.text_input("Gasto Urinario:", placeholder="Ej: 450 cc en el turno / 0.8 cc/kg/h")
+                deposicion_sel = st.radio("Deposición:", ["Sí", "No"], horizontal=True)
+                with tab_r:
+    
+                st.markdown("#### 📋 Recomendaciones de Entrega de Turno")
+                recomendaciones_turno = st.text_area("💬 Recomendaciones y Novedades del Turno:", placeholder="Escribe aquí las recomendaciones que se comentan durante la entrega de turno...", height=120)
+                plan_input = st.text_area("📝 Plan de Cuidados de Enfermería y Pendientes:", placeholder="Laboratorios, imágenes diagnósticas, valoraciones o procedimientos pendientes...")
+                alerta_input = st.text_input("🚨 Escala de Alerta Temprana (Observaciones NEWS2):", placeholder="Puntaje u observaciones de seguimiento...")
+                recibe_input = st.text_input("👤 Identificación del Auxiliar o Jefe que Recibe:")
+                st.markdown("
+                ", unsafe_allow_html=True)
+                if st.button("💾 FINALIZAR Y GUARDAR ENTREGA DE TURNO", use_container_width=True):
+                st.success("¡Entrega de turno guardada con éxito en la nube!")
+                else:
+                st.error("❌ Paciente no registrado. Prueba con 10234567.")
