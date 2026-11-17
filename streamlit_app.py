@@ -185,14 +185,15 @@ else:
 "Midazolam",
 "Propofol"
 ]
-infusiones_registradas = {}
-col_m1, col_m2 = st.columns(2)
-for idx, med in enumerate(medicamentos_uci):
-contenedor = col_m1 if idx % 2 == 0 else col_m2
-with contenedor:
-valor_goteo = st.text_input(f"💉 {med}", placeholder="Goteo / Dosis...", key=f"med_{idx}")
-if valor_goteo.strip():
-infusiones_registradas[med] = valor_goteo.strip()
+            infusiones_registradas = {}
+            col_m1, col_m2 = st.columns(2)
+            for idx, med in enumerate(medicamentos_uci):
+                contenedor = col_m1 if idx % 2 == 0 else col_m2
+                with contenedor:
+                    valor_goteo = st.text_input(f"💉 {med}", placeholder="Goteo / Dosis...", key=f"med_{idx}")
+                    if valor_goteo.strip():
+                        infusiones_registradas[med] = valor_goteo.strip()
+
 # --- PESTAÑA 4: EVALUACIÓN ---
 with tab_a:
 st.markdown("#### 🩺 Evaluación y Monitoreo")
