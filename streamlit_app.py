@@ -185,9 +185,9 @@ else:
             st.text_input("Número de Atención", value=paciente['num_atencion'], disabled=True)
             st.text_input("Edad del Paciente", value=f"{paciente['edad']} Años", disabled=True)
             diagnostico_input = st.text_area("💬 Diagnóstico Médico (Comentarios de la Entrega de Turno)", value=paciente['diagnostico'])
-with tab_b:
-st.markdown("#### 🧬 Historial y Dispositivos Clínicos")
-alergia_sel = st.radio(
+        with tab_b:
+            st.markdown("#### 🧬 Historial y Dispositivos Clínicos")
+            alergia_sel = st.radio(
 "¿Registra Alergias?",
 ["No", "Sí"],
 index=1 if paciente['alergia_si_no'] == "Sí" else 0,
