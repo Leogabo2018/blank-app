@@ -10,13 +10,11 @@ st.set_page_config(
     layout="centered"
 )
 
-# Inicializar variables de sesión
 if "autenticado" not in st.session_state: st.session_state.autenticado = False
 if "usuario_id" not in st.session_state: st.session_state.usuario_id = ""
 if "turno" not in st.session_state: st.session_state.turno = ""
 if "mostrar_registro" not in st.session_state: st.session_state.mostrar_registro = False
 
-# Memoria temporal para almacenar el historial de entregas de turno
 if "historial_entregas" not in st.session_state:
     st.session_state.historial_entregas = [
         {
@@ -26,6 +24,7 @@ if "historial_entregas" not in st.session_state:
             "Cédula": "10234567",
             "Paciente": "Carlos Mario Restrepo (Ficticio)",
             "Cama": "UCI-101",
+            "Aislamiento": "Contacto",
             "Signos": "TA: 118/74 | FC: 86 | FR: 18 | T°: 36.8 | SO2: 96%",
             "Infusiones Activas": "Noradrenalina: 0.08 mcg/kg/min | SSN 0.9%: 60 cc/h",
             "Recomendaciones": "Vigilar gasto urinario horario y control de gases arteriales.",
@@ -62,15 +61,11 @@ def obtener_estilo_aislamiento(tipo):
     }
     return estilos.get(tipo, ("#f1f3f5", "#495057", "#adb5bd", "🛡️"))
 
-# Encabezado Corporativo
 col_l1, col_l2 = st.columns(2)
 with col_l1: st.markdown("<h4 style='text-align: center; color: #003366;'>🏥 Clínica del Country</h4>", unsafe_allow_html=True)
 with col_l2: st.markdown("<h4 style='text-align: center; color: #003366;'>🏥 Clínica La Colina</h4>", unsafe_allow_html=True)
 st.markdown("<hr style='margin:10px 0px; border: 1px solid #e6e6e6;'/>", unsafe_allow_html=True)
 
-# =========================================================================
-# PANTALLA 1: INGRESO Y REGISTRO
-# =========================================================================
 if not st.session_state.autenticado:
     st.markdown("<h2 style='text-align: center; font-weight: bold; color: #111111;'>FORMATO DE RECIBO Y ENTREGA DE TURNO</h2>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #555555; font-size: 15px;'>Gestión Clínica Asistencial Digital Sin Papel</p>", unsafe_allow_html=True)
@@ -115,9 +110,6 @@ if not st.session_state.autenticado:
                 st.session_state.mostrar_registro = False
                 st.rerun()
 
-# =========================================================================
-# PANTALLA 2: APLICACIÓN PRINCIPAL CON BANNERS DE COLORES CLÍNICOS
-# =========================================================================
 else:
     st.markdown(f"📊 **Sesión:** {st.session_state.usuario_id} | ⏱️ **Turno:** {st.session_state.turno}")
     if st.button("❌ Cerrar Sesión (Salir)"):
@@ -130,12 +122,10 @@ else:
     paciente = db.buscar_paciente(criterio) if criterio else None
     
     if paciente:
-        # Sincronizar cambios en tiempo real desde la pestaña Antecedentes
         alergia_actual = st.session_state.get("alergia_radio", paciente.get('alergia_si_no', 'No'))
         detalle_alergia_actual = st.session_state.get("alergia_input", paciente.get('alergia_detalle', ''))
         aislamiento_actual = st.session_state.get("aislamiento_select", paciente.get('aislamiento', 'Ninguno'))
 
-        # 1. TARJETA DE IDENTIFICACIÓN DEL PACIENTE (SIEMPRE VISIBLE)
         st.markdown(f"""
             <div style="background-color: #e8f4fd; padding: 12px; border-radius: 8px; border-left: 6px solid #0066cc; margin-bottom: 10px;">
                 <h4 style="margin: 0; color: #003366;">📌 Paciente: <b>{paciente['nombre_paciente']}</b></h4>
@@ -143,7 +133,6 @@ else:
             </div>
         """, unsafe_allow_html=True)
 
-        # 2. BANNERS PERMANENTES DE ALERGIAS Y AISLAMIENTO POR COLOR CLÍNICO
         col_ban1, col_ban2 = st.columns(2)
         
         with col_ban1:
@@ -175,21 +164,20 @@ else:
             else:
                 st.markdown(f"""
                     <div style="background-color: {bg_aisla}; color: {txt_aisla}; padding: 10px; border-radius: 8px; border-left: 6px solid {borde_aisla}; margin-bottom: 12px;">
-{icono_aisla} SIN AISLAMIENTO
+                        <span style="font-size: 14px; font-weight: bold;">{icono_aisla} SIN AISLAMIENTO</span><br>
+                        <span style="font-size: 13px;">Precauciones estándar</span>
+                    </div>
+                """, unsafe_allow_html=True)
 
-Precauciones estándar
-
-""", unsafe_allow_html=True)
-# Creamos las 6 pestañas principales
-tab_s, tab_b, tab_liq, tab_a, tab_r, tab_hist = st.tabs([
-"📋 S - SITUACIÓN",
-"🧬 B - ANTECEDENTES",
-"💧 LÍQUIDOS UCI",
-"🩺 A - EVALUACIÓN",
-"📝 R - RECOMENDACIONES",
-"📂 HISTORIAL"
-])
-    if paciente:
+    tab_s, tab_b, tab_liq, tab_a, tab_r, tab_hist = st.tabs([
+        "📋 S - SITUACIÓN", 
+        "🧬 B - ANTECEDENTES", 
+        "💧 LÍQUIDOS UCI",
+        "🩺 A - EVALUACIÓN", 
+        "📝 R - RECOMENDACIONES",
+        "📂 HISTORIAL"
+    ])
+      if paciente:
         # --- PESTAÑA 1: SITUACIÓN ---
         with tab_s:
             st.markdown("#### 📌 Datos de la Situación")
@@ -366,13 +354,4 @@ tab_s, tab_b, tab_liq, tab_a, tab_r, tab_hist = st.tabs([
             st.dataframe(df_historial, use_container_width=True, hide_index=True)
             
             # Botón de descarga en CSV (Excel)
-csv_data = df_historial.to_csv(index=False).encode('utf-8-sig')
-st.download_button(
-label="📥 Descargar Reporte de Turnos (Excel / CSV)",
-data=csv_data,
-file_name=f"historial_entregas_sbar_{datetime.now().strftime('%Y%m%d')}.csv",
-mime="text/csv",
-use_container_width=True
-)
-else:
-st.info("No se encontraron entregas de turno con los filtros seleccionados.")
+
