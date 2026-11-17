@@ -179,12 +179,13 @@ else:
                 "Noradrenalina",
                 "Vasopresina",
                 "Amiodarona",
-"Insulina Cristalina",
-"Nutrición Parenteral",
-"Fentanilo",
-"Midazolam",
-"Propofol"
-]
+                 "Insulina Cristalina",
+                "Nutrición Parenteral",
+                "Fentanilo",
+                "Midazolam",
+                "Propofol"
+            ]
+            
             infusiones_registradas = {}
             col_m1, col_m2 = st.columns(2)
             for idx, med in enumerate(medicamentos_uci):
@@ -194,95 +195,113 @@ else:
                     if valor_goteo.strip():
                         infusiones_registradas[med] = valor_goteo.strip()
 
-# --- PESTAÑA 4: EVALUACIÓN ---
-with tab_a:
-st.markdown("#### 🩺 Evaluación y Monitoreo")
-col_in1, col_in2 = st.columns(2)
-with col_in1:
-ta_s = st.number_input("Tensión Arterial Sistólica (mmHg)", value=120)
-ta_d = st.number_input("Tensión Arterial Diastólica (mmHg)", value=80)
-fc = st.number_input("Frecuencia Cardíaca (FC)", value=80)
-with col_in2:
-fr = st.number_input("Frecuencia Respiratoria (FR)", value=16)
-temp = st.number_input("Temperatura Corporal (°C)", value=36.5, format="%.1f")
-so2 = st.number_input("Saturación de Oxígeno (SO2 %)", value=98)
-dolor_sel = st.slider("Escala del Dolor", 0, 10, value=0)
-st.markdown("##### 🚨 Semáforo de Alertas Clínicas (NEWS2)")
-est_fc, bg_fc, tx_fc = evaluar_signo("FC", fc)
-est_so2, bg_so2, tx_so2 = evaluar_signo("SO2", so2)
-render_badge("Frecuencia Cardíaca", est_fc, bg_fc, tx_fc)
-render_badge("Saturación de Oxígeno", est_so2, bg_so2, tx_so2)
-st.markdown("##### 🫁 Soporte Oxigenoterapia")
-oxigeno_sel = st.radio("¿Tiene soporte de Oxígeno?", ["No", "Sí"], horizontal=True)
-oxigeno_det = st.text_input("Dispositivo y Flujo:") if oxigeno_sel == "Sí" else ""
-st.markdown("##### ⚠️ Escalas Clínicas de Riesgo")
-braden_sel = st.selectbox("Escala de Riesgo de Piel (Braden)", ["Riesgo Bajo", "Riesgo Medio", "Riesgo Alto"])
-morse_sel = st.selectbox("Escala de Riesgo de Caídas (Morse)", ["Riesgo Bajo", "Riesgo Medio", "Riesgo Alto"])
-heridas_input = st.text_area("🩹 Heridas, Drenes, Piel u Otros:")
-via_oral_input = st.text_area("🍽️ Estado de la Vía Oral:")
-st.markdown("##### 💧 Eliminación")
-tipo_orina = st.radio("Eliminación Urinaria:", ["Espontáneo", "Sonda Vesical"], horizontal=True)
-gasto_urinario = st.text_input("Gasto Urinario:", placeholder="Ej: 450 cc en el turno / 0.8 cc/kg/h")
-deposicion_sel = st.radio("Deposición:", ["Sí", "No"], horizontal=True)
-# --- PESTAÑA 5: RECOMENDACIONES Y GUARDADO ---
-with tab_r:
-st.markdown("#### 📋 Recomendaciones de Entrega de Turno")
-recomendaciones_turno = st.text_area("💬 Recomendaciones y Novedades del Turno:", placeholder="Escribe aquí las recomendaciones que se comentan durante la entrega de turno...", height=120)
-plan_input = st.text_area("📝 Plan de Cuidados de Enfermería y Pendientes:", placeholder="Laboratorios, imágenes diagnósticas, valoraciones o procedimientos pendientes...")
-alerta_input = st.text_input("🚨 Escala de Alerta Temprana (Observaciones NEWS2):", placeholder="Puntaje u observaciones de seguimiento...")
-recibe_input = st.text_input("👤 Identificación del Auxiliar o Jefe que Recibe:")
-if st.button("💾 FINALIZAR Y GUARDAR ENTREGA DE TURNO", use_container_width=True):
-resumen_infusiones = " | ".join([f"{k}: {v}" for k, v in infusiones_registradas.items()]) if infusiones_registradas else "Sin infusiones activas"
-resumen_signos = f"TA: {ta_s}/{ta_d} | FC: {fc} | FR: {fr} | T°: {temp} | SO2: {so2}%"
-nuevo_registro = {
-"Fecha": datetime.now().strftime("%Y-%m-%d"),
-"Hora": datetime.now().strftime("%H:%M"),
-"Turno": st.session_state.turno,
-"Cédula": criterio,
-"Paciente": paciente['nombre_paciente'],
-"Cama": paciente['cama'],
-"Signos": resumen_signos,
-"Infusiones Activas": resumen_infusiones,
-"Recomendaciones": recomendaciones_turno if recomendaciones_turno.strip() else "Sin novedades registradas",
-"Entrega": st.session_state.usuario_id,
-"Recibe": recibe_input if recibe_input.strip() else "Pendiente firma"
-}
-st.session_state.historial_entregas.insert(0, nuevo_registro)
-st.success("¡Entrega de turno guardada con éxito! Ya puedes consultarla en la pestaña '📂 HISTORIAL'.")
-else:
-with tab_s:
-st.warning("⚠️ Digita una cédula válida arriba (ej: 10234567) para cargar los datos del paciente.")
-# --- PESTAÑA 6: HISTORIAL DE ENTREGAS DE TURNO ---
-with tab_hist:
-st.markdown("#### 📂 Historial y Consulta de Entregas de Turno")
-df_historial = pd.DataFrame(st.session_state.historial_entregas)
-# Filtros interactivos
-col_f1, col_f2, col_f3 = st.columns(3)
-with col_f1:
-filtro_cedula = st.text_input("Filtrar por Cédula:", placeholder="Ej: 10234567").strip()
-with col_f2:
-filtro_fecha = st.text_input("Filtrar por Fecha (AAAA-MM-DD):", placeholder="Ej: 2026-11-16").strip()
-with col_f3:
-opciones_turno = ["Todos", "Mañana (07:00 - 13:00)", "Tarde (13:00 - 19:00)", "Noche (19:00 - 07:00)"]
-filtro_turno = st.selectbox("Filtrar por Turno:", opciones_turno)
-# Aplicar filtros
-if filtro_cedula:
-df_historial = df_historial[df_historial["Cédula"].str.contains(filtro_cedula, case=False, na=False)]
-if filtro_fecha:
-df_historial = df_historial[df_historial["Fecha"].str.contains(filtro_fecha, case=False, na=False)]
-if filtro_turno != "Todos":
-df_historial = df_historial[df_historial["Turno"] == filtro_turno]
-st.markdown(f"Registros encontrados: {len(df_historial)}")
-if not df_historial.empty:
-st.dataframe(df_historial, use_container_width=True, hide_index=True)
-# Botón de descarga en CSV (Excel)
-csv_data = df_historial.to_csv(index=False).encode('utf-8-sig')
-st.download_button(
-label="📥 Descargar Reporte de Turnos (Excel / CSV)",
-data=csv_data,
-file_name=f"historial_entregas_sbar_{datetime.now().strftime('%Y%m%d')}.csv",
-mime="text/csv",
-use_container_width=True
-)
-else:
-st.info("No se encontraron entregas de turno con los filtros seleccionados.")
+        # --- PESTAÑA 4: EVALUACIÓN ---
+        with tab_a:
+            st.markdown("#### 🩺 Evaluación y Monitoreo")
+            col_in1, col_in2 = st.columns(2)
+            with col_in1:
+                ta_s = st.number_input("Tensión Arterial Sistólica (mmHg)", value=120)
+                ta_d = st.number_input("Tensión Arterial Diastólica (mmHg)", value=80)
+                fc = st.number_input("Frecuencia Cardíaca (FC)", value=80)
+            with col_in2:
+                fr = st.number_input("Frecuencia Respiratoria (FR)", value=16)
+                temp = st.number_input("Temperatura Corporal (°C)", value=36.5, format="%.1f")
+                so2 = st.number_input("Saturación de Oxígeno (SO2 %)", value=98)
+                
+            dolor_sel = st.slider("Escala del Dolor", 0, 10, value=0)
+            
+            st.markdown("##### 🚨 Semáforo de Alertas Clínicas (NEWS2)")
+            est_fc, bg_fc, tx_fc = evaluar_signo("FC", fc)
+            est_so2, bg_so2, tx_so2 = evaluar_signo("SO2", so2)
+            render_badge("Frecuencia Cardíaca", est_fc, bg_fc, tx_fc)
+            render_badge("Saturación de Oxígeno", est_so2, bg_so2, tx_so2)
+
+            st.markdown("##### 🫁 Soporte Oxigenoterapia")
+            oxigeno_sel = st.radio("¿Tiene soporte de Oxígeno?", ["No", "Sí"], horizontal=True)
+            oxigeno_det = st.text_input("Dispositivo y Flujo:") if oxigeno_sel == "Sí" else ""
+
+            st.markdown("##### ⚠️ Escalas Clínicas de Riesgo")
+            braden_sel = st.selectbox("Escala de Riesgo de Piel (Braden)", ["Riesgo Bajo", "Riesgo Medio", "Riesgo Alto"])
+            morse_sel = st.selectbox("Escala de Riesgo de Caídas (Morse)", ["Riesgo Bajo", "Riesgo Medio", "Riesgo Alto"])
+            
+            heridas_input = st.text_area("🩹 Heridas, Drenes, Piel u Otros:")
+            via_oral_input = st.text_area("🍽️ Estado de la Vía Oral:")
+            
+            st.markdown("##### 💧 Eliminación")
+            tipo_orina = st.radio("Eliminación Urinaria:", ["Espontáneo", "Sonda Vesical"], horizontal=True)
+            gasto_urinario = st.text_input("Gasto Urinario:", placeholder="Ej: 450 cc en el turno / 0.8 cc/kg/h")
+            deposicion_sel = st.radio("Deposición:", ["Sí", "No"], horizontal=True)
+
+        # --- PESTAÑA 5: RECOMENDACIONES Y GUARDADO ---
+        with tab_r:
+            st.markdown("#### 📋 Recomendaciones de Entrega de Turno")
+            recomendaciones_turno = st.text_area("💬 Recomendaciones y Novedades del Turno:", placeholder="Escribe aquí las recomendaciones que se comentan durante la entrega de turno...", height=120)
+            plan_input = st.text_area("📝 Plan de Cuidados de Enfermería y Pendientes:", placeholder="Laboratorios, imágenes diagnósticas, valoraciones o procedimientos pendientes...")
+            alerta_input = st.text_input("🚨 Escala de Alerta Temprana (Observaciones NEWS2):", placeholder="Puntaje u observaciones de seguimiento...")
+            recibe_input = st.text_input("👤 Identificación del Auxiliar o Jefe que Recibe:")
+            
+            if st.button("💾 FINALIZAR Y GUARDAR ENTREGA DE TURNO", use_container_width=True):
+                resumen_infusiones = " | ".join([f"{k}: {v}" for k, v in infusiones_registradas.items()]) if infusiones_registradas else "Sin infusiones activas"
+                resumen_signos = f"TA: {ta_s}/{ta_d} | FC: {fc} | FR: {fr} | T°: {temp} | SO2: {so2}%"
+                
+                nuevo_registro = {
+                    "Fecha": datetime.now().strftime("%Y-%m-%d"),
+                    "Hora": datetime.now().strftime("%H:%M"),
+                    "Turno": st.session_state.turno,
+                    "Cédula": criterio,
+                    "Paciente": paciente['nombre_paciente'],
+                    "Cama": paciente['cama'],
+                    "Signos": resumen_signos,
+                    "Infusiones Activas": resumen_infusiones,
+                    "Recomendaciones": recomendaciones_turno if recomendaciones_turno.strip() else "Sin novedades registradas",
+                    "Entrega": st.session_state.usuario_id,
+                    "Recibe": recibe_input if recibe_input.strip() else "Pendiente firma"
+                }
+                
+                st.session_state.historial_entregas.insert(0, nuevo_registro)
+                st.success("¡Entrega de turno guardada con éxito! Ya puedes consultarla en la pestaña '📂 HISTORIAL'.")
+    else:
+        with tab_s:
+            st.warning("⚠️ Digita una cédula válida arriba (ej: 10234567) para cargar los datos del paciente.")
+
+    # --- PESTAÑA 6: HISTORIAL DE ENTREGAS DE TURNO ---
+    with tab_hist:
+        st.markdown("#### 📂 Historial y Consulta de Entregas de Turno")
+        
+        df_historial = pd.DataFrame(st.session_state.historial_entregas)
+        
+        # Filtros interactivos
+        col_f1, col_f2, col_f3 = st.columns(3)
+        with col_f1:
+            filtro_cedula = st.text_input("Filtrar por Cédula:", placeholder="Ej: 10234567").strip()
+        with col_f2:
+            filtro_fecha = st.text_input("Filtrar por Fecha (AAAA-MM-DD):", placeholder="Ej: 2026-11-16").strip()
+        with col_f3:
+            opciones_turno = ["Todos", "Mañana (07:00 - 13:00)", "Tarde (13:00 - 19:00)", "Noche (19:00 - 07:00)"]
+            filtro_turno = st.selectbox("Filtrar por Turno:", opciones_turno)
+            
+        # Aplicar filtros
+        if filtro_cedula:
+            df_historial = df_historial[df_historial["Cédula"].str.contains(filtro_cedula, case=False, na=False)]
+        if filtro_fecha:
+            df_historial = df_historial[df_historial["Fecha"].str.contains(filtro_fecha, case=False, na=False)]
+        if filtro_turno != "Todos":
+            df_historial = df_historial[df_historial["Turno"] == filtro_turno]
+            
+        st.markdown(f"**Registros encontrados:** {len(df_historial)}")
+        
+        if not df_historial.empty:
+            st.dataframe(df_historial, use_container_width=True, hide_index=True)
+            
+            # Botón de descarga en CSV (Excel)
+            csv_data = df_historial.to_csv(index=False).encode('utf-8-sig')
+            st.download_button(
+                label="📥 Descargar Reporte de Turnos (Excel / CSV)",
+                data=csv_data,
+                file_name=f"historial_entregas_sbar_{datetime.now().strftime('%Y%m%d')}.csv",
+                mime="text/csv",
+                use_container_width=True
+            )
+        else:
+            st.info("No se encontraron entregas de turno con los filtros seleccionados.")
+
