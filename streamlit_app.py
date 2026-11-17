@@ -209,16 +209,16 @@ key="aislamiento_select"
 )
 st.markdown("##### 🩹 Conteo Físico de Accesos Vasculares")
 c1, c2 = st.columns(2)
-with c1:
+        with c1:
 c_peri = st.number_input("Acceso Periférico (Cantidad)", min_value=0, value=paciente['cant_periferico'])
 c_picc = st.number_input("Catéter Periférico PICC", min_value=0, value=paciente['cant_picc'])
 c_media = st.number_input("Catéter Línea Media", min_value=0, value=paciente['cant_linea_media'])
-with c2:
+        with c2:
 c_cvc = st.number_input("Catéter Venoso Central (CVC)", min_value=0, value=paciente['cant_cvc'])
 c_art = st.number_input("Catéter Línea Arterial", min_value=0, value=paciente['cant_linea_arterial'])
 c_alto = st.number_input("Catéter Alto Flujo", min_value=0, value=paciente['cant_alto_flujo'])
 medico_input = st.text_input("👨‍⚕️ Médico Tratante Asignado", value=paciente['medico_tratante'])
-with tab_liq:
+        with tab_liq:
 st.markdown("#### 💧 Goteo de Líquidos e Infusiones UCI")
 st.caption("Digita la velocidad de infusión (cc/h, mcg/kg/min, UI/h) únicamente en los medicamentos activos.")
 medicamentos_uci = [
