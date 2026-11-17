@@ -177,7 +177,7 @@ else:
         "📝 R - RECOMENDACIONES",
         "📂 HISTORIAL"
     ])
-          if paciente:
+        if paciente:
         with tab_s:
             st.markdown("#### 📌 Datos de la Situación")
             st.text_input("Cama Asignada", value=paciente['cama'], disabled=True)
