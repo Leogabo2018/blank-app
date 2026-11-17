@@ -177,7 +177,7 @@ else:
         "📝 R - RECOMENDACIONES",
         "📂 HISTORIAL"
     ])
-      if paciente:
+        if paciente:
         # --- PESTAÑA 1: SITUACIÓN ---
         with tab_s:
             st.markdown("#### 📌 Datos de la Situación")
