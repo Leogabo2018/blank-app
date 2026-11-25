@@ -305,23 +305,24 @@ else:
                 resumen_signos = f"TA: {ta_s}/{ta_d} | FC: {fc} | FR: {fr} | T°: {temp} | SO2: {so2}%"
                 
         nuevo_registro = {
-                "Fecha": datetime.now().strftime("%Y-%m-%d"),
-                "Hora": datetime.now().strftime("%H:%M"),
-                "Turno": st.session_state.turno,
-                "Cédula": criterio,
-                "Paciente": paciente['nombre_paciente'],
-                "Cama": paciente['cama'],
-                "Aislamiento": aislamiento_sel,
-                "Accesos Vasculares": ubicacion_accesos.strip() if ubicacion_accesos.strip() else "Sin detalle de accesos",
-                "Signos": resumen_signos,
-                "Infusiones Activas": resumen_infusiones,
-                "Recomendaciones": recomendaciones_turno if recomendaciones_turno.strip() else "Sin novedades registradas",
-                "Entrega": st.session_state.usuario_id,
-                "Recibe": recibe_input if recibe_input.strip() else "Pendiente firma"
-            }
-                
-                st.session_state.historial_entregas.insert(0, nuevo_registro)
-                st.success("¡Entrega de turno guardada con éxito! Ya puedes consultarla en la pestaña '📂 HISTORIAL'.")
+            "Fecha": datetime.now().strftime("%Y-%m-%d"),
+            "Hora": datetime.now().strftime("%H:%M"),
+            "Turno": st.session_state.turno,
+            "Cédula": criterio,
+            "Paciente": paciente['nombre_paciente'],
+            "Cama": paciente['cama'],
+            "Aislamiento": aislamiento_sel,
+            "Accesos Vasculares": ubicacion_accesos.strip() if ubicacion_accesos.strip() else "Sin detalle de accesos",
+            "Signos": resumen_signos,
+            "Infusiones Activas": resumen_infusiones,
+            "Recomendaciones": recomendaciones_turno if recomendaciones_turno.strip() else "Sin novedades registradas",
+            "Entrega": st.session_state.usuario_id,
+            "Recibe": recibe_input if recibe_input.strip() else "Pendiente firma"
+        }
+
+        st.session_state.historial_entregas.insert(0, nuevo_registro)
+        st.success("¡Entrega de turno guardada con éxito! Ya puedes consultarla en la pestaña 'HISTORIAL'.")
+
     else:
         with tab_s:
             st.warning("⚠️ Digita una cédula válida arriba (ej: 10234567) para cargar los datos del paciente.")
