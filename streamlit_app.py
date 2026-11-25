@@ -209,7 +209,7 @@ else:
                 key="aislamiento_select"
             )
             
-                    st.markdown("##### 💉 Conteo Físico y Ubicación de Accesos Vasculares")
+     st.markdown("##### 💉 Conteo Físico y Ubicación de Accesos Vasculares")
         c1, c2 = st.columns(2)
         with c1:
             c_peri = st.number_input("Acceso Periférico (Cantidad)", min_value=0, value=paciente['cant_periferico'])
