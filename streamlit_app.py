@@ -209,18 +209,24 @@ else:
                 key="aislamiento_select"
             )
             
-            st.markdown("##### 🩹 Conteo Físico de Accesos Vasculares")
-            c1, c2 = st.columns(2)
-            with c1:
-                c_peri = st.number_input("Acceso Periférico (Cantidad)", min_value=0, value=paciente['cant_periferico'])
-                c_picc = st.number_input("Catéter Periférico PICC", min_value=0, value=paciente['cant_picc'])
-                c_media = st.number_input("Catéter Línea Media", min_value=0, value=paciente['cant_linea_media'])
-            with c2:
-                c_cvc = st.number_input("Catéter Venoso Central (CVC)", min_value=0, value=paciente['cant_cvc'])
-                c_art = st.number_input("Catéter Línea Arterial", min_value=0, value=paciente['cant_linea_arterial'])
-                c_alto = st.number_input("Catéter Alto Flujo", min_value=0, value=paciente['cant_alto_flujo'])
-                
-            medico_input = st.text_input("👨‍⚕️ Médico Tratante Asignado", value=paciente['medico_tratante'])
+                    st.markdown("##### 💉 Conteo Físico y Ubicación de Accesos Vasculares")
+        c1, c2 = st.columns(2)
+        with c1:
+            c_peri = st.number_input("Acceso Periférico (Cantidad)", min_value=0, value=paciente['cant_periferico'])
+            c_picc = st.number_input("Catéter Periférico PICC", min_value=0, value=paciente['cant_picc'])
+            c_media = st.number_input("Catéter Línea Media", min_value=0, value=paciente['cant_linea_media'])
+        with c2:
+            c_cvc = st.number_input("Catéter Venoso Central (CVC)", min_value=0, value=paciente['cant_cvc'])
+            c_art = st.number_input("Catéter Línea Arterial", min_value=0, value=paciente['cant_linea_arterial'])
+            c_alto = st.number_input("Catéter Alto Flujo", min_value=0, value=paciente['cant_alto_flujo'])
+
+        ubicacion_accesos = st.text_area(
+            "📍 Ubicación Anatómica, Calibre y Estado (Permeabilidad / Curación):",
+            placeholder="Ej: CVC Yugular Der. 3 lúmenes permeable, curación limpia | AVP #20 MSI sin flebitis",
+            height=70
+        )
+        
+        medico_input = st.text_input("👨‍⚕️ Médico Tratante Asignado", value=paciente['medico_tratante'])
 
         with tab_liq:
             st.markdown("#### 💧 Goteo de Líquidos e Infusiones UCI")
@@ -297,21 +303,21 @@ else:
             if st.button("💾 FINALIZAR Y GUARDAR ENTREGA DE TURNO", use_container_width=True):
                 resumen_infusiones = " | ".join([f"{k}: {v}" for k, v in infusiones_registradas.items()]) if infusiones_registradas else "Sin infusiones activas"
                 resumen_signos = f"TA: {ta_s}/{ta_d} | FC: {fc} | FR: {fr} | T°: {temp} | SO2: {so2}%"
-                
-                nuevo_registro = {
-                    "Fecha": datetime.now().strftime("%Y-%m-%d"),
-                    "Hora": datetime.now().strftime("%H:%M"),
-                    "Turno": st.session_state.turno,
-                    "Cédula": criterio,
-                    "Paciente": paciente['nombre_paciente'],
-                    "Cama": paciente['cama'],
-                    "Aislamiento": aislamiento_sel,
-                    "Signos": resumen_signos,
-                    "Infusiones Activas": resumen_infusiones,
-                    "Recomendaciones": recomendaciones_turno if recomendaciones_turno.strip() else "Sin novedades registradas",
-                    "Entrega": st.session_state.usuario_id,
-                    "Recibe": recibe_input if recibe_input.strip() else "Pendiente firma"
-                }
+                            nuevo_registro = {
+                "Fecha": datetime.now().strftime("%Y-%m-%d"),
+                "Hora": datetime.now().strftime("%H:%M"),
+                "Turno": st.session_state.turno,
+                "Cédula": criterio,
+                "Paciente": paciente['nombre_paciente'],
+                "Cama": paciente['cama'],
+                "Aislamiento": aislamiento_sel,
+                "Accesos Vasculares": ubicacion_accesos.strip() if ubicacion_accesos.strip() else "Sin detalle de accesos",
+                "Signos": resumen_signos,
+                "Infusiones Activas": resumen_infusiones,
+                "Recomendaciones": recomendaciones_turno if recomendaciones_turno.strip() else "Sin novedades registradas",
+                "Entrega": st.session_state.usuario_id,
+                "Recibe": recibe_input if recibe_input.strip() else "Pendiente firma"
+            }
                 
                 st.session_state.historial_entregas.insert(0, nuevo_registro)
                 st.success("¡Entrega de turno guardada con éxito! Ya puedes consultarla en la pestaña '📂 HISTORIAL'.")
