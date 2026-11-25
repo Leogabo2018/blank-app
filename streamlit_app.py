@@ -303,7 +303,8 @@ else:
             if st.button("💾 FINALIZAR Y GUARDAR ENTREGA DE TURNO", use_container_width=True):
                 resumen_infusiones = " | ".join([f"{k}: {v}" for k, v in infusiones_registradas.items()]) if infusiones_registradas else "Sin infusiones activas"
                 resumen_signos = f"TA: {ta_s}/{ta_d} | FC: {fc} | FR: {fr} | T°: {temp} | SO2: {so2}%"
-                            nuevo_registro = {
+                
+        nuevo_registro = {
                 "Fecha": datetime.now().strftime("%Y-%m-%d"),
                 "Hora": datetime.now().strftime("%H:%M"),
                 "Turno": st.session_state.turno,
